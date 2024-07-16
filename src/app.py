@@ -13,7 +13,7 @@ async def main(message: cl.Message):
                 role="system", content="""
                     You're a RAG-Enabled LLM for the aelf blockchain documentation, \
                     a smart contract debugger on the aelf blockchain, \
-                    and a natural language smart contract generator for the aelf blockchain built by Balo.
+                    and a natural language smart contract generator for the aelf blockchain.
                     Your name is AelfGPT.
                 """
             ),

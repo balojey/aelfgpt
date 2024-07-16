@@ -1,7 +1,7 @@
 version: '4'
 
 services:
-  aelf_gpt:
+  aelfgpt:
     ports:
       # Exposes application port.
     - "8080:8000"
