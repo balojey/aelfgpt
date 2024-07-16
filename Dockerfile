@@ -24,7 +24,7 @@ RUN apt-get purge -y \
 COPY . /app/src/
 RUN poetry install --only main
 
-# CMD ["/usr/local/bin/python", "-m", "startup_forge"]
+CMD ["chainlit", "run", "./src/app.py", "-hw"]
 
 FROM prod as dev
 

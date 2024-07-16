@@ -12,7 +12,6 @@ services:
       - .env
     depends_on:
       - ollama
-      - ollama-webui
     environment:
       AELF_GPT_HOST: 0.0.0.0
     networks:
