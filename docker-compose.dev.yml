@@ -1,0 +1,15 @@
+version: '4'
+
+services:
+  api:
+    ports:
+      # Exposes application port.
+    - "8080:8080"
+    build:
+      target: dev
+    volumes:
+      # Adds current directory as volume.
+    - .:/app/src/
+    environment:
+      # Enables autoreload.
+      AELF_GPT_RELOAD: "True"
