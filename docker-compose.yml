@@ -26,7 +26,6 @@ services:
       - .:/code
       - ./ollama/ollama:/root/.ollama
     container_name: ollama
-    command: ["ollama", "run", "codeqwen"]
     pull_policy: always
     tty: true
     restart: always
@@ -49,7 +48,7 @@ services:
       - OLLAMA_BASE_URLS=http://host.docker.internal:7869 #comma separated ollama hosts
       - ENV=dev
       - WEBUI_AUTH=False
-      - WEBUI_NAME=valiantlynx AI
+      - WEBUI_NAME=AelfGPT Admin
       - WEBUI_URL=http://localhost:8080
       - WEBUI_SECRET_KEY=t0p-s3cr3t
     extra_hosts:
@@ -58,41 +57,41 @@ services:
     networks:
       - aelfnet
 
-  chromadb:
-    image: chromadb
-    container_name: chromadb
-    build:
-      context: .
-      dockerfile: Dockerfile.chromadb
-    volumes:
-      # Be aware that indexed data are located in "/chroma/chroma/"
-      # Default configuration for persist_directory in chromadb/config.py
-      # Read more about deployments: https://docs.trychroma.com/deployment
-      - chroma-data:/chroma/chroma
-    command: "--workers 1 --host 0.0.0.0 --port 6000 --proxy-headers --log-config chromadb/log_config.yml --timeout-keep-alive 30"
-    environment:
-      - IS_PERSISTENT=TRUE
-      - CHROMA_SERVER_AUTHN_PROVIDER=${CHROMA_SERVER_AUTHN_PROVIDER}
-      - CHROMA_SERVER_AUTHN_CREDENTIALS_FILE=${CHROMA_SERVER_AUTHN_CREDENTIALS_FILE}
-      - CHROMA_SERVER_AUTHN_CREDENTIALS=${CHROMA_SERVER_AUTHN_CREDENTIALS}
-      - CHROMA_AUTH_TOKEN_TRANSPORT_HEADER=${CHROMA_AUTH_TOKEN_TRANSPORT_HEADER}
-      - PERSIST_DIRECTORY=${PERSIST_DIRECTORY:-/chroma/chroma}
-      - CHROMA_OTEL_EXPORTER_ENDPOINT=${CHROMA_OTEL_EXPORTER_ENDPOINT}
-      - CHROMA_OTEL_EXPORTER_HEADERS=${CHROMA_OTEL_EXPORTER_HEADERS}
-      - CHROMA_OTEL_SERVICE_NAME=${CHROMA_OTEL_SERVICE_NAME}
-      - CHROMA_OTEL_GRANULARITY=${CHROMA_OTEL_GRANULARITY}
-      - CHROMA_SERVER_NOFILE=${CHROMA_SERVER_NOFILE}
-    restart: unless-stopped # possible values are: "no", always", "on-failure", "unless-stopped"
-    ports:
-      - "6000:6000"
-    healthcheck:
-      # Adjust below to match your container port
-      test: [ "CMD", "curl", "-f", "http://localhost:6000/api/v1/heartbeat" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    networks:
-      - aelfnet
+  # chromadb:
+  #   image: chromadb
+  #   container_name: chromadb
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.chromadb
+  #   volumes:
+  #     # Be aware that indexed data are located in "/chroma/chroma/"
+  #     # Default configuration for persist_directory in chromadb/config.py
+  #     # Read more about deployments: https://docs.trychroma.com/deployment
+  #     - chroma-data:/chroma/chroma
+  #   command: "--workers 1 --host 0.0.0.0 --port 6000 --proxy-headers --log-config chromadb/log_config.yml --timeout-keep-alive 30"
+  #   environment:
+  #     - IS_PERSISTENT=TRUE
+  #     - CHROMA_SERVER_AUTHN_PROVIDER=${CHROMA_SERVER_AUTHN_PROVIDER}
+  #     - CHROMA_SERVER_AUTHN_CREDENTIALS_FILE=${CHROMA_SERVER_AUTHN_CREDENTIALS_FILE}
+  #     - CHROMA_SERVER_AUTHN_CREDENTIALS=${CHROMA_SERVER_AUTHN_CREDENTIALS}
+  #     - CHROMA_AUTH_TOKEN_TRANSPORT_HEADER=${CHROMA_AUTH_TOKEN_TRANSPORT_HEADER}
+  #     - PERSIST_DIRECTORY=${PERSIST_DIRECTORY:-/chroma/chroma}
+  #     - CHROMA_OTEL_EXPORTER_ENDPOINT=${CHROMA_OTEL_EXPORTER_ENDPOINT}
+  #     - CHROMA_OTEL_EXPORTER_HEADERS=${CHROMA_OTEL_EXPORTER_HEADERS}
+  #     - CHROMA_OTEL_SERVICE_NAME=${CHROMA_OTEL_SERVICE_NAME}
+  #     - CHROMA_OTEL_GRANULARITY=${CHROMA_OTEL_GRANULARITY}
+  #     - CHROMA_SERVER_NOFILE=${CHROMA_SERVER_NOFILE}
+  #   restart: unless-stopped # possible values are: "no", always", "on-failure", "unless-stopped"
+  #   ports:
+  #     - "6000:6000"
+  #   healthcheck:
+  #     # Adjust below to match your container port
+  #     test: [ "CMD", "curl", "-f", "http://localhost:6000/api/v1/heartbeat" ]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #   networks:
+  #     - aelfnet
 
 volumes:
   chroma-data:
