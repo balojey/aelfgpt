@@ -31,7 +31,7 @@ sys.path.insert(0, '../')
 config = dotenv_values(find_dotenv())
 
 # create client and a new collection
-remote_db = chromadb.HttpClient(host="chromadb-server", port=6000)
+remote_db = chromadb.HttpClient(host="cserver", port=6000)
 chroma_collection = remote_db.get_collection("quickstart")
 
 # LlamaIndex will download embeddings models as needed
@@ -46,7 +46,7 @@ Settings.embed_model = embed_model
 
 """ Setup vector """
 
-llm = Ollama(model="codeqwen", request_timeout=60.0, base_url="http://ollama:11434")
+llm = Ollama(model="codeqwen", request_timeout=120.0, base_url="http://ollama:11434")
 Settings.llm = llm
 vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
 

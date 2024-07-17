@@ -30,7 +30,7 @@ sys.path.insert(0, '../')
 config = dotenv_values(find_dotenv())
 
 # create client and a new collection
-remote_db = chromadb.HttpClient(host="chromadb", port=6000)
+remote_db = chromadb.HttpClient(host="cserver", port=6000)
 chroma_collection = remote_db.get_or_create_collection("quickstart")
 
 
