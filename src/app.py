@@ -1,3 +1,8 @@
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
+
 import chainlit as cl
 from llama_index.llms.ollama import Ollama
 from llama_index.core.llms import ChatMessage, ChatResponse, ChatResponseAsyncGen
@@ -27,7 +32,7 @@ config = dotenv_values(find_dotenv())
 
 # create client and a new collection
 db = chromadb.PersistentClient(path="./chroma_db")
-chroma_collection = db.get_collection("./chroma_db")
+chroma_collection = db.get_collection("quickstart")
 
 # LlamaIndex will download embeddings models as needed
 # Set llamaindex cache dir to ../cache dir here (Default is system tmp)

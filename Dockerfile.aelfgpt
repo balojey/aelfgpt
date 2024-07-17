@@ -29,3 +29,4 @@ CMD ["chainlit", "run", "./src/app.py", "-hw"]
 FROM prod as dev
 
 RUN poetry install
+RUN poetry run /usr/local/bin/python resources/utils/rag_populate_db.py
