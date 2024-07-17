@@ -21,7 +21,7 @@ RUN apt-get purge -y \
   && rm -rf /var/lib/apt/lists/*
 
 # Copying actuall application
-COPY ./aelfgpt/ /app/src/
+COPY . /app/src/
 RUN poetry install --only main
 
 CMD ["chainlit", "run", "./src/app.py", "-hw"]

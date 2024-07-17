@@ -4,7 +4,7 @@ services:
   aelfgpt:
     build:
       context: .
-      dockerfile: ./aelfgpt/Dockerfile
+      dockerfile: ./Dockerfile
       target: prod
     image: aelfgpt:${AELT_GPT_VERSION:-latest}
     container_name: aelfgpt

@@ -6,7 +6,7 @@ services:
     container_name: chromadb
     build:
       context: .
-      dockerfile: ./chromadb/Dockerfile
+      dockerfile: ./Dockerfile
     volumes:
       # Be aware that indexed data are located in "/chroma/chroma/"
       # Default configuration for persist_directory in chromadb/config.py
