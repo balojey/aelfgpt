@@ -1,1 +1,3 @@
-git clone https://github.com/chroma-core/chroma.git
+./chroma_init.sh
+./ollama_init.sh
+./aelfgpt_init.sh

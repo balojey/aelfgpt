@@ -1,0 +1,1 @@
+docker-compose -f ollama/docker-compose.yml up -d --build

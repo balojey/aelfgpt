@@ -1,0 +1,1 @@
+docker-compose -f aelfgpt/docker-compose.yml up -d --build

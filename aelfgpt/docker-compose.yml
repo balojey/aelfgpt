@@ -1,0 +1,33 @@
+version: "4"
+
+services:
+  aelfgpt:
+    build:
+      context: .
+      dockerfile: ./aelfgpt/Dockerfile
+      target: prod
+    image: aelfgpt:${AELT_GPT_VERSION:-latest}
+    container_name: aelfgpt
+    restart: always
+    ports:
+      # Exposes application port.
+      - "8080:8000"
+    volumes:
+      # Adds current directory as volume.
+      - .:/app/src/
+    env_file:
+      - .env
+    # depends_on:
+    #   cserver:
+    #     condition: service_healthy
+    #   ollama:
+    #     condition: service_started
+    environment:
+      AELF_GPT_HOST: 0.0.0.0
+      # Enables autoreload.
+      AELF_GPT_RELOAD: "True"
+    networks:
+      - aelfnet
+
+networks:
+  aelfnet:
