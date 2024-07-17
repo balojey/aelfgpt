@@ -1,3 +1,8 @@
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
+
 import os, torch, sys, logging
 from dotenv import find_dotenv, dotenv_values
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
@@ -25,10 +30,8 @@ sys.path.insert(0, '../')
 config = dotenv_values(find_dotenv())
 
 # create client and a new collection
-# chroma_client = chromadb.EphemeralClient()
-# chroma_collection = chroma_client.create_collection("quickstart")
-db = chromadb.PersistentClient(path="./chroma_db")
-chroma_collection = db.get_or_create_collection("quickstart")
+remote_db = chromadb.HttpClient(host="chromadb", port=6000)
+chroma_collection = remote_db.get_or_create_collection("quickstart")
 
 
 # ATLAS_URI = config.get('ATLAS_URI')

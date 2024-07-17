@@ -31,8 +31,8 @@ sys.path.insert(0, '../')
 config = dotenv_values(find_dotenv())
 
 # create client and a new collection
-db = chromadb.PersistentClient(path="./chroma_db")
-chroma_collection = db.get_collection("quickstart")
+remote_db = chromadb.HttpClient(host="chromadb-server", port=6000)
+chroma_collection = remote_db.get_collection("quickstart")
 
 # LlamaIndex will download embeddings models as needed
 # Set llamaindex cache dir to ../cache dir here (Default is system tmp)
