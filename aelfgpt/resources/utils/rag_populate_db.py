@@ -30,9 +30,7 @@ config = dotenv_values(find_dotenv())
 llm_url = config.get("AELFGPT_LLM_URL")
 chroma_host = config.get("AELFGPT_CHROMA_HOST")
 chroma_port = config.get("AELFGPT_CHROMA_PORT")
-print(
-    f"llm_url: {llm_url}\nchroma_host: {chroma_host}\nchroma_port: {chroma_port}"
-)
+llm_name = config.get("AELFGPT_LLM_NAME")
 
 # create client and a new collection
 remote_db = chromadb.HttpClient(host=chroma_host, port=chroma_port)
@@ -45,7 +43,7 @@ os.environ['LLAMA_INDEX_CACHE_DIR'] = os.path.join(os.path.abspath('../'), 'cach
 
 """ Setup Embeddings """
 
-llm = Ollama(model="codeqwen", request_timeout=60.0, base_url=llm_url)
+llm = Ollama(model=llm_name, request_timeout=60.0, base_url=llm_url)
 Settings.llm = llm
 embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
 Settings.embed_model = embed_model
