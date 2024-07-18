@@ -30,6 +30,9 @@ config = dotenv_values(find_dotenv())
 llm_url = config.get("AELFGPT_LLM_URL")
 chroma_host = config.get("AELFGPT_CHROMA_HOST")
 chroma_port = config.get("AELFGPT_CHROMA_PORT")
+print(
+    f"llm_url: {llm_url}\nchroma_host: {chroma_host}\nchroma_port: {chroma_port}"
+)
 
 # create client and a new collection
 remote_db = chromadb.HttpClient(host=chroma_host, port=chroma_port)
