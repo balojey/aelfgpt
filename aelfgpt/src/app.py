@@ -50,7 +50,7 @@ Settings.embed_model = embed_model
 
 """ Setup vector """
 
-llm = Ollama(model="codeqwen", request_timeout=120.0, base_url="http://ollama:11434")
+llm = Ollama(model="codeqwen", request_timeout=60.0, base_url=llm_url)
 Settings.llm = llm
 vector_store = ChromaVectorStore(chroma_collection=docs_collection)
 
