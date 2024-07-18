@@ -30,9 +30,13 @@ sys.path.insert(0, '../')
 # _ = load_dotenv(find_dotenv()) # read local .env file
 config = dotenv_values(find_dotenv())
 
+llm_url = config.get("AELFGPT_LLM_URL")
+chroma_host = config.get("AELFGPT_CHROMA_HOST")
+chroma_port = config.get("AELFGPT_CHROMA_PORT")
+
 # create client and a new collection
-remote_db = chromadb.HttpClient(host="cserver", port=6000)
-chroma_collection = remote_db.get_collection("quickstart")
+remote_db = chromadb.HttpClient(host=chroma_host, port=chroma_port)
+docs_collection = remote_db.get_or_create_collection("docs")
 
 # LlamaIndex will download embeddings models as needed
 # Set llamaindex cache dir to ../cache dir here (Default is system tmp)
