@@ -6,7 +6,7 @@ authors = ["Ademola Balogun <ademolabalogun91@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 chainlit = "^1.1.306"
 llama-index = "^0.10.55"
 llama-index-llms-ollama = "^0.1.5"
