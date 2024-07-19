@@ -47,6 +47,7 @@ llm = Ollama(model=llm_name, request_timeout=60.0, base_url=llm_url)
 Settings.llm = llm
 embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
 Settings.embed_model = embed_model
+Settings.context_window = 4096
 vector_store = ChromaVectorStore(chroma_collection=docs_collection)
 storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
