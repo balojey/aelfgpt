@@ -55,9 +55,9 @@ mongodb_client = pymongo.MongoClient(atlas_uri)
 try:
     # load index
     vector_store = MongoDBAtlasVectorSearch(mongodb_client = mongodb_client,
-                        db_name = DB_NAME, collection_name = COLLECTION_NAME,
-                        index_name  = 'idx_embedding',
-                    )
+                    db_name = DB_NAME, collection_name = COLLECTION_NAME,
+                    index_name  = 'idx_embedding',
+                )
     index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
 except Exception as e:
     logging.error("Error loading index: ", e)
@@ -65,7 +65,7 @@ except Exception as e:
 
 @cl.on_chat_start
 async def start():
-    llm = Ollama(model=llm_name, request_timeout=60.0, base_url=llm_url)
+    llm = Ollama(model=llm_name, request_timeout=120.0, base_url=llm_url)
     Settings.llm = llm
     Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
     Settings.context_window = 4096
