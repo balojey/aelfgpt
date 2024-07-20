@@ -43,7 +43,6 @@ llm_name = config.get("AELFGPT_LLM_NAME")
 
 if not all([llm_url, chroma_host, chroma_port, llm_name]):
     logging.error("Environment variables AELFGPT_LLM_URL, AELFGPT_LLM_NAME, AELFGPT_CHROMA_HOST, or AELFGPT_CHROMA_PORT are not set.")
-    sys.exit(1)
 
 try:
     # Create ChromaDB client and collection
@@ -51,7 +50,6 @@ try:
     docs_collection = remote_db.get_collection("docs")
 except Exception as e:
     logging.error("Error connecting to ChromaDB: ", e)
-    sys.exit(1)
 
 # Setup VectorStore
     try:
@@ -59,7 +57,7 @@ except Exception as e:
         index = VectorStoreIndex.from_vector_store(vector_store=vector_store)
     except Exception as e:
         logging.error("Error setting up VectorStore: ", e)
-        sys.exit(1)
+
 
 
 @cl.on_chat_start
@@ -70,7 +68,7 @@ async def start():
         Settings.embed_model = embed_model
     except Exception as e:
         logging.error("Error setting up HuggingFaceEmbedding: ", e)
-        sys.exit(1)
+
 
     # Setup LLM
     try:
@@ -80,7 +78,7 @@ async def start():
         service_context = ServiceContext.from_defaults(callback_manager=CallbackManager([cl.LlamaIndexCallbackHandler()]))
     except Exception as e:
         logging.error("Error setting up LLM: ", e)
-        sys.exit(1)
+
 
     # Setup ChatEngine and Memory
     try:
@@ -102,7 +100,7 @@ async def start():
         cl.user_session.set("chat_engine", chat_engine)
     except Exception as e:
         logging.error("Error setting up VectorStoreIndex or ChatEngine: ", e)
-        sys.exit(1)
+
 
 
 @cl.on_message
