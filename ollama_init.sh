@@ -23,7 +23,7 @@ if [ "$1" == "up" ]; then
   # docker run --gpus all nvidia/cuda:11.5.2-base-ubuntu20.04 nvidia-smi
 
   docker compose -f ollama/docker-compose.yml up -d --build
-  docker exec -it ollama ollama pull gemma2:27b
+  docker exec -it ollama ollama pull codeqwen
 elif [ "$1" == "down" ]; then
   docker compose -f ollama/docker-compose.yml down
 else
