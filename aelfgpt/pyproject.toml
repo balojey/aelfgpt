@@ -9,12 +9,14 @@ readme = "README.md"
 python = "^3.10"
 chainlit = "^1.1.306"
 llama-index = "^0.10.55"
-llama-index-llms-ollama = "^0.1.5"
+llama-index-llms-ollama = "^0.1.6"
 chromadb = "^0.5.4"
 llama-index-embeddings-huggingface = "^0.2.2"
 llama-index-readers-json = "^0.1.5"
 llama-index-vector-stores-chroma = "^0.1.10"
+llama-index-vector-stores-mongodb = "^0.1.7
 pysqlite3-binary = "^0.5.3"
+pymongo[srv] = "^3.11"
 
 
 [build-system]

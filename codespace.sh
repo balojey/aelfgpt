@@ -1,4 +1,4 @@
-./chromadb_init.sh up
+# ./chromadb_init.sh up
 ./ollama_init.sh up
 cd aelfgpt
 cp example.env .env

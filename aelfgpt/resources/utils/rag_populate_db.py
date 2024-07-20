@@ -3,14 +3,14 @@ import sys
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 
-import os, torch, logging
+import os, torch, logging, pymongo
 from dotenv import find_dotenv, dotenv_values
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.core import StorageContext
 from llama_index.core import VectorStoreIndex
 from llama_index.readers.json import JSONReader
 from llama_index.core import Settings
-from llama_index.vector_stores.chroma import ChromaVectorStore
+from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
 import chromadb
 from llama_index.llms.ollama import Ollama
 
@@ -27,28 +27,45 @@ sys.path.insert(0, '../')
 # _ = load_dotenv(find_dotenv()) # read local .env file
 config = dotenv_values(find_dotenv())
 
-llm_url = config.get("AELFGPT_LLM_URL")
-chroma_host = config.get("AELFGPT_CHROMA_HOST")
-chroma_port = config.get("AELFGPT_CHROMA_PORT")
-llm_name = config.get("AELFGPT_LLM_NAME")
+ATLAS_URI = config.get('ATLAS_URI')
 
-# create client and a new collection
-remote_db = chromadb.HttpClient(host=chroma_host, port=chroma_port)
-docs_collection = remote_db.get_or_create_collection("docs")
+if not ATLAS_URI:
+    raise Exception ("'ATLAS_URI' is not set.  Please set it above to continue...")
+else:
+    print("ATLAS_URI Connection string found:", ATLAS_URI)
+
+# Define DB variables
+DB_NAME = 'aelf'
+COLLECTION_NAME = 'docs'
+INDEX_NAME = 'idx_embedding'
 
 # LlamaIndex will download embeddings models as needed
 # Set llamaindex cache dir to ../cache dir here (Default is system tmp)
 # This way, we can easily see downloaded artifacts
 os.environ['LLAMA_INDEX_CACHE_DIR'] = os.path.join(os.path.abspath('../'), 'cache')
 
+mongodb_client = pymongo.MongoClient(ATLAS_URI)
+
+""" Clear out collection """
+
+database = mongodb_client[DB_NAME]
+collection = database[COLLECTION_NAME]
+
+doc_count = collection.count_documents (filter = {})
+print (f"Document count before delete : {doc_count:,}")
+
+result = collection.delete_many(filter= {})
+print (f"Deleted docs : {result.deleted_count}")
+
 """ Setup Embeddings """
 
-llm = Ollama(model=llm_name, request_timeout=60.0, base_url=llm_url)
-Settings.llm = llm
 embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
 Settings.embed_model = embed_model
 Settings.context_window = 4096
-vector_store = ChromaVectorStore(chroma_collection=docs_collection)
+vector_store = MongoDBAtlasVectorSearch(mongodb_client = mongodb_client,
+                    db_name = DB_NAME, collection_name = COLLECTION_NAME,
+                    index_name  = 'idx_embedding',
+                )
 storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
 """ Read JSON Documents """
