@@ -4,9 +4,10 @@ sys.path.append('.')
 from aelf import AElf
 from pipeline.db.models.transaction import Transaction
 from pipeline.db.dependencies import get_db_session
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy import select
+# from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+# from sqlalchemy import select
 import asyncio
+from sqlmodel import Session
 
 
 url = "https://tdvw-test-node.aelf.io"
@@ -27,7 +28,7 @@ async def get_block_hash_by_height(block_height: int) -> str:
     return block["BlockHash"]
 
 
-async def save_transaction(transaction: dict, session: AsyncSession) -> None:
+async def save_transaction(transaction: dict, session: Session) -> None:
     db_transaction = Transaction(
         id = transaction["TransactionId"],
         block_hash = transaction["BlockHash"],
@@ -47,11 +48,11 @@ async def save_transaction(transaction: dict, session: AsyncSession) -> None:
     session.add(db_transaction)
 
 
-async def get_transaction(transaction_id: str, session: AsyncSession) -> Transaction:
-    transaction = await session.execute(
-        select(Transaction).where(Transaction.id == transaction_id)
-    )
-    return transaction.scalars().first()
+# async def get_transaction(transaction_id: str, session: AsyncSession) -> Transaction:
+#     transaction = await session.execute(
+#         select(Transaction).where(Transaction.id == transaction_id)
+#     )
+#     return transaction.scalars().first()
 
 
 async def main():
