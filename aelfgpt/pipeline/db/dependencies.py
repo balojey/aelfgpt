@@ -1,6 +1,8 @@
 from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
 from dotenv import find_dotenv, dotenv_values
 
 
@@ -16,7 +18,7 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
     :param request: current request.
     :yield: database session.
     """
-    engine = create_async_engine(str(db_url), echo=db_echo)
+    engine = create_async_engine(str(db_url), echo=bool(db_echo))
     session: AsyncSession = async_sessionmaker(
         engine,
         expire_on_commit=False,
@@ -27,3 +29,8 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
     finally:
         await session.commit()
         await session.close()
+
+
+def get_engine():
+    engine = create_engine(str(db_url), echo=bool(db_echo))
+    return engine
