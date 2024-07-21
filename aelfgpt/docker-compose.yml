@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
       target: prod
-    image: aelfgpt:${AELT_GPT_VERSION:-latest}
+    image: aelfgpt:${AELFGPT_VERSION:-latest}
     container_name: aelfgpt
     restart: always
     ports:
@@ -17,17 +17,52 @@ services:
       - .:/app/src/
     env_file:
       - .env
-    # depends_on:
-    #   cserver:
-    #     condition: service_healthy
-    #   ollama:
-    #     condition: service_started
     environment:
       AELF_GPT_HOST: 0.0.0.0
       # Enables autoreload.
       AELF_GPT_RELOAD: "True"
     networks:
       - aelfnet
+
+  db:
+    image: postgres:13.8-bullseye
+    hostname: aelfgpt-db
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: "aelfgpt"
+      POSTGRES_USER: "aelfgpt"
+      POSTGRES_DB: "aelfgpt"
+    volumes:
+    - aelfgpt-db-data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: pg_isready -U aelfgpt
+      interval: 2s
+      timeout: 3s
+      retries: 40
+    networks:
+      - aelfnet
+
+  # migrator:
+  #   image: aelfgpt:${AELFGPT_VERSION:-latest}
+  #   restart: "no"
+  #   command: alembic upgrade head
+  #   environment:
+  #     AELFGPT_DB_HOST: aelfgpt-db
+  #     AELFGPT_DB_PORT: 5432
+  #     AELFGPT_DB_USER: aelfgpt
+  #     AELFGPT_DB_PASS: aelfgpt
+  #     AELFGPT_DB_BASE: aelfgpt
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #     aelfgpt:
+  #       condition: service_started
+
+volumes:
+  aelfgpt-db-data:
+    name: aelfgpt-db-data
 
 networks:
   aelfnet:

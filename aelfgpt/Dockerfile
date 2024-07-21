@@ -24,9 +24,9 @@ RUN apt-get purge -y \
 COPY . /app/src/
 RUN poetry install --only main
 
-CMD ["chainlit", "run", "./src/app.py", "-hw"]
+# CMD ["chainlit", "run", "./src/app.py", "-hw"]
 
 FROM prod as dev
 
 RUN poetry install
-# RUN poetry run /usr/local/bin/python resources/utils/rag_populate_db.py
+# CMD ["/usr/local/bin/python", "-m", "pipeline/jobs/aelf_streaming.py"]
