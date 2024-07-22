@@ -20,6 +20,11 @@ from llama_index.core.indices.base import BaseChatEngine
 # Import langchain
 from langchain_community.utilities.sql_database import SQLDatabase
 from langchain_community.agent_toolkits import create_sql_agent
+from langchain_community.chat_models import ChatOllama as SQLChatModel
+from langchain_core.prompts import ChatPromptTemplate
+from langchain.schema import StrOutputParser
+from langchain.schema.runnable import Runnable
+from langchain.schema.runnable.config import RunnableConfig
 
 
 # Setup logging
@@ -33,9 +38,10 @@ config = dotenv_values(find_dotenv())
 llm_url = config.get("AELFGPT_LLM_URL")
 llm_name = config.get("AELFGPT_LLM_NAME")
 atlas_uri = config.get("ATLAS_URI")
+db_url = config.get("DB_URL")
 
-if not all([llm_url, atlas_uri, llm_name]):
-    logging.error("Environment variables AELFGPT_LLM_URL, AELFGPT_LLM_NAME, or ATLAS_URI are not set.")
+if not all([llm_url, atlas_uri, llm_name, db_url]):
+    logging.error("Environment variables AELFGPT_LLM_URL, AELFGPT_LLM_NAME, DB_URL, or ATLAS_URI are not set.")
 
 # LlamaIndex will download embeddings models as needed
 # Set llamaindex cache dir to ../cache dir here (Default is system tmp)
@@ -61,7 +67,7 @@ except Exception as e:
 
 try:
     # load db
-    db = SQLDatabase.from_uri("sqlite:///Chinook.db")
+    db = SQLDatabase.from_uri(str(db_url))
 except Exception as e:
     logging.error("Error loading in db: ", e)
 
@@ -91,20 +97,35 @@ async def start():
     Settings.context_window = 4096
 
     Settings.callback_manager = CallbackManager([cl.LlamaIndexCallbackHandler()])
-    chat_engine = index.as_chat_engine(
+    thorin = index.as_chat_engine(
         chat_mode="context",
         system_prompt=(
                 """
-                You're a RAG-Enabled LLM for the aelf blockchain documentation, \
-                a smart contract debugger on the aelf blockchain, \
+                You're a helpful assistant who help developers understand the aelf blockchain documentation better, \
+                a smart contract debugger who checks smart contracts written for the aelf blockchain for errors, \
                 and a smart contract generator for the aelf blockchain.
                 Your name is Thorin.
                 """
         ),
         memory=ChatMemoryBuffer.from_defaults()
     )
+
+    llm = SQLChatModel(model=llm_name, request_timeout=120.0, host=llm_url)
+    agent_executor = create_sql_agent(llm, db=db, agent_type="openai-tools", verbose=True)
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "You are a helpful assistant who helps developers gain insight from the realtime data on the aelf blockchain.",
+            ),
+            ("human", "{input}"),
+        ]
+    )
+    gandalf = prompt | agent_executor | StrOutputParser()
+
     chat_profile = cl.user_session.get("chat_profile")
-    cl.user_session.set("chat_engine", chat_engine)
+    cl.user_session.set("thorin", thorin)
+    cl.user_session.set("gandalf", gandalf)
 
     await cl.Message(
         author="Assistant", content=f"Hello! Im an {chat_profile}. How may I help you?"
@@ -113,12 +134,25 @@ async def start():
 
 @cl.on_message
 async def main(message: cl.Message):
-    chat_engine: BaseChatEngine = cl.user_session.get("chat_engine")
-    msg = cl.Message(content="", author="Assistant")
+    chat_profile = cl.user_session.get("chat_profile")
+    if chat_profile == "THORIN":
+        thorin: BaseChatEngine = cl.user_session.get("thorin")
+        msg = cl.Message(content="", author="Assistant")
 
-    res: ChatResponseAsyncGen = await chat_engine.achat(message=message.content)
-    res.is_dummy_stream = True
+        res: ChatResponseAsyncGen = await thorin.achat(message=message.content)
+        res.is_dummy_stream = True
 
-    for token in res.response_gen:
-        await msg.stream_token(token)
-    await msg.send()
+        for token in res.response_gen:
+            await msg.stream_token(token)
+        await msg.send()
+    else:
+        gandalf = cl.user_session.get("gandalf")
+        msg = cl.Message(content="")
+
+        async for chunk in runnable.astream(
+            {"question": message.content},
+            config=RunnableConfig(callbacks=[cl.LangchainCallbackHandler()]),
+        ):
+            await msg.stream_token(chunk)
+
+        await msg.send()
