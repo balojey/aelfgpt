@@ -17,6 +17,11 @@ from llama_index.core.callbacks import CallbackManager
 from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
 from llama_index.core.indices.base import BaseChatEngine
 
+# Import langchain
+from langchain_community.utilities.sql_database import SQLDatabase
+from langchain_community.agent_toolkits import create_sql_agent
+
+
 # Setup logging
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
@@ -54,6 +59,12 @@ try:
 except Exception as e:
     logging.error("Error loading index: ", e)
 
+try:
+    # load db
+    db = SQLDatabase.from_uri("sqlite:///Chinook.db")
+except Exception as e:
+    logging.error("Error loading in db: ", e)
+
 
 @cl.set_chat_profiles
 async def chat_profile():
@@ -86,7 +97,7 @@ async def start():
                 """
                 You're a RAG-Enabled LLM for the aelf blockchain documentation, \
                 a smart contract debugger on the aelf blockchain, \
-                and a natural language smart contract generator for the aelf blockchain.
+                and a smart contract generator for the aelf blockchain.
                 Your name is Thorin.
                 """
         ),
