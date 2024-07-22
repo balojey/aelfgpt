@@ -20,7 +20,6 @@ from llama_index.core.indices.base import BaseChatEngine
 # Import langchain
 from langchain_community.utilities.sql_database import SQLDatabase
 from langchain_community.agent_toolkits import create_sql_agent
-from langchain_community.agent_toolkits.sql.base import AgentExecutor
 from langchain_community.chat_models import ChatOllama as SQLChatModel
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.schema import StrOutputParser
@@ -140,7 +139,7 @@ async def main(message: cl.Message):
             await msg.stream_token(token)
         await msg.send()
     else:
-        gandalf: AgentExecutor = cl.user_session.get("gandalf")
+        gandalf = cl.user_session.get("gandalf")
         msg = cl.Message(content="")
 
         for chunk in gandalf.invoke(message.content)["output"]:
