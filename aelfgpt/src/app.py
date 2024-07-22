@@ -20,6 +20,7 @@ from llama_index.core.indices.base import BaseChatEngine
 # Import langchain
 from langchain_community.utilities.sql_database import SQLDatabase
 from langchain_community.agent_toolkits import create_sql_agent
+from langchain_community.agent_toolkits.sql.base import AgentExecutor
 from langchain_community.chat_models import ChatOllama as SQLChatModel
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.schema import StrOutputParser
@@ -78,12 +79,12 @@ async def chat_profile():
         cl.ChatProfile(
             name="THORIN",
             markdown_description="The only assistant you need for coding, reading the docs and debugging your smart contracts.",
-            icon="https://picsum.photos/200",
+            icon="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhJs1XadNtYiSVs2xcCjo3sDqdYktRNgAqHQ&s",
         ),
         cl.ChatProfile(
             name="GANDALF",
             markdown_description="This model helps you gain insight from on-chain data on the aelf blockchain.",
-            icon="https://picsum.photos/250",
+            icon="https://pbs.twimg.com/media/EM_VsGXWoAALfFz.jpg",
         ),
     ]
 
@@ -110,18 +111,11 @@ async def start():
         memory=ChatMemoryBuffer.from_defaults()
     )
 
-    llm = SQLChatModel(model=llm_name, request_timeout=120.0, host=llm_url)
-    agent_executor = create_sql_agent(llm, db=db, agent_type="openai-tools", verbose=True)
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            (
-                "system",
-                "You are a helpful assistant who helps developers gain insight from the realtime data on the aelf blockchain.",
-            ),
-            ("human", "{input}"),
-        ]
-    )
-    gandalf = prompt | agent_executor | StrOutputParser()
+    llm = SQLChatModel(model=llm_name, request_timeout=120.0)
+    gandalf = create_sql_agent(
+        llm, db=db, agent_type="openai-tools", verbose=True,
+        callback_manager=[cl.LangchainCallbackHandler()]
+        )
 
     chat_profile = cl.user_session.get("chat_profile")
     cl.user_session.set("thorin", thorin)
@@ -146,13 +140,9 @@ async def main(message: cl.Message):
             await msg.stream_token(token)
         await msg.send()
     else:
-        gandalf = cl.user_session.get("gandalf")
+        gandalf: AgentExecutor = cl.user_session.get("gandalf")
         msg = cl.Message(content="")
 
-        async for chunk in runnable.astream(
-            {"question": message.content},
-            config=RunnableConfig(callbacks=[cl.LangchainCallbackHandler()]),
-        ):
+        for chunk in gandalf.invoke(message.content)["output"]:
             await msg.stream_token(chunk)
-
         await msg.send()
