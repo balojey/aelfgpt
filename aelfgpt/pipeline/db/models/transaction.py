@@ -23,10 +23,11 @@
     # logs: Mapped[List] = mapped_column(ARRAY(JSON))
 
 
-from typing import Optional, List, Dict, Any
+from typing import Optional, List
 from sqlmodel import SQLModel, Field
 from sqlalchemy.types import TypeDecorator, TEXT
 import json
+
 
 class JSONType(TypeDecorator):
     impl = TEXT
@@ -50,10 +51,12 @@ class Transaction(SQLModel, table=True):
     status: str
     transaction_from: str
     method_name: str
-    method_params: Dict[Any, Any] = Field(sa_column=Field(JSONType))
     ref_block_number: str
     ref_block_prefix: str
     signature: str
     transaction_to: str
     transaction_size: str
-    logs: List[Dict[Any, Any]] = Field(sa_column=Field(JSONType))
+    transaction_fee_symbol: Optional[str] = None
+    transaction_fee_amount: Optional[float] = None
+    resource_token_fee_symbol: Optional[str] = None
+    resource_token_fee_amount: Optional[float] = None

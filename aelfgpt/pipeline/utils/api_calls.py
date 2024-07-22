@@ -19,7 +19,8 @@ transaction_results = chain.get_transaction_results(block_hash=block_hash)
 for transaction_result in transaction_results:
     transaction_id = transaction_result["TransactionId"]
     transaction = chain.get_transaction_result(transaction_id=transaction_id)
-    pprint(transaction)
+    transaction_fees = chain.get_transaction_fees(transaction["Logs"])
+    print(transaction_fees)
     break
     # print("\n\n")
     # transaction_fees = chain.get_transaction_fees(transaction["Logs"])

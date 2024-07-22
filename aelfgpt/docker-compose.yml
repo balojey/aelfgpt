@@ -44,21 +44,21 @@ services:
     networks:
       - aelfnet
 
-  # migrator:
-  #   image: aelfgpt:${AELFGPT_VERSION:-latest}
-  #   restart: "no"
-  #   command: alembic upgrade head
-  #   environment:
-  #     AELFGPT_DB_HOST: aelfgpt-db
-  #     AELFGPT_DB_PORT: 5432
-  #     AELFGPT_DB_USER: aelfgpt
-  #     AELFGPT_DB_PASS: aelfgpt
-  #     AELFGPT_DB_BASE: aelfgpt
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #     aelfgpt:
-  #       condition: service_started
+  migrator:
+    image: aelfgpt:${AELFGPT_VERSION:-latest}
+    restart: "no"
+    command: alembic upgrade head
+    environment:
+      AELFGPT_DB_HOST: aelfgpt-db
+      AELFGPT_DB_PORT: 5432
+      AELFGPT_DB_USER: aelfgpt
+      AELFGPT_DB_PASS: aelfgpt
+      AELFGPT_DB_BASE: aelfgpt
+    depends_on:
+      db:
+        condition: service_healthy
+      aelfgpt:
+        condition: service_started
 
 volumes:
   aelfgpt-db-data:

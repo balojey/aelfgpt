@@ -4,14 +4,6 @@ import torch
 import logging
 import pymongo
 from dotenv import find_dotenv, dotenv_values
-import chromadb
-
-# Import and set up pysqlite3
-try:
-    __import__('pysqlite3')
-    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-except ImportError as e:
-    logging.error("pysqlite3 import error: ", e)
 
 # Import chainlit and llama_index
 import chainlit as cl
@@ -63,6 +55,23 @@ except Exception as e:
     logging.error("Error loading index: ", e)
 
 
+@cl.set_chat_profiles
+async def chat_profile():
+    return [
+        cl.ChatProfile(
+            name="THORIN",
+            markdown_description="The only assistant you need for coding, reading the docs and debugging your smart contracts.",
+            icon="https://picsum.photos/200",
+        ),
+        cl.ChatProfile(
+            name="GANDALF",
+            markdown_description="This model helps you gain insight from on-chain data on the aelf blockchain.",
+            icon="https://picsum.photos/250",
+        ),
+    ]
+
+
+
 @cl.on_chat_start
 async def start():
     llm = Ollama(model=llm_name, request_timeout=120.0, base_url=llm_url)
@@ -78,15 +87,16 @@ async def start():
                 You're a RAG-Enabled LLM for the aelf blockchain documentation, \
                 a smart contract debugger on the aelf blockchain, \
                 and a natural language smart contract generator for the aelf blockchain.
-                Your name is AelfGPT.
+                Your name is Thorin.
                 """
         ),
         memory=ChatMemoryBuffer.from_defaults()
     )
+    chat_profile = cl.user_session.get("chat_profile")
     cl.user_session.set("chat_engine", chat_engine)
 
     await cl.Message(
-        author="Assistant", content="Hello! Im an AelfGPT. How may I help you?"
+        author="Assistant", content=f"Hello! Im an {chat_profile}. How may I help you?"
     ).send()
 
 

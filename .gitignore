@@ -1,5 +1,6 @@
 ollama/ollama
 cache
+test_dir
 
 # ignore mac created DS_Store files
 **/.DS_Store

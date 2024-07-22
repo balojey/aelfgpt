@@ -3,32 +3,34 @@ sys.path.append('.')
 
 from aelf import AElf
 from pipeline.db.models.transaction import Transaction
-from pipeline.db.dependencies import get_db_session
-# from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-# from sqlalchemy import select
-import asyncio
-from sqlmodel import Session
+from pipeline.db.dependencies import get_db_session, init_db
+from sqlmodel import Session, select
+from sqlalchemy.exc import IntegrityError
 
 
 url = "https://tdvw-test-node.aelf.io"
 chain = AElf(url)
 
 
-async def get_transactions(block_hash: str) -> list:
+def get_transactions(block_hash: str) -> list:
     transactions = chain.get_transaction_results(block_hash)
     return transactions
 
 
-async def get_block_height() -> int:
+def get_block_height() -> int:
     return chain.get_block_height()
 
 
-async def get_block_hash_by_height(block_height: int) -> str:
+def get_block_hash_by_height(block_height: int) -> str:
     block = chain.get_block_by_height(block_height)
     return block["BlockHash"]
 
 
-async def save_transaction(transaction: dict, session: Session) -> None:
+def get_transaction_fees(logs: list[dict] | dict) -> list:
+    transaction_fees = chain.get_transaction_fees(logs)
+
+
+def save_transaction(transaction: dict, transaction_fees: list, session: Session) -> None:
     db_transaction = Transaction(
         id = transaction["TransactionId"],
         block_hash = transaction["BlockHash"],
@@ -37,39 +39,40 @@ async def save_transaction(transaction: dict, session: Session) -> None:
         status = transaction["Status"],
         transaction_from = transaction["Transaction"]["From"],
         method_name = transaction["Transaction"]["MethodName"],
-        method_params = transaction["Transaction"]["Params"],
         ref_block_number = transaction["Transaction"]["RefBlockNumber"],
         ref_block_prefix = transaction["Transaction"]["RefBlockPrefix"],
         signature = transaction["Transaction"]["Signature"],
         transaction_to = transaction["Transaction"]["To"],
-        transaction_size = transaction["TransactionSize"],
-        logs = transaction["Logs"],
+        transaction_size = transaction["TransactionSize"]
     )
-    session.add(db_transaction)
+    if transaction_fees and len(transaction_fees) != 0:
+        try:
+            db_transaction.transaction_fee_symbol = transaction_fees[0]["transaction_fee_symbol"]
+            db_transaction.transaction_fee_amount = float(transaction_fees[0]["transaction_fee_amount"])
+            db_transaction.resource_token_fee_symbol = transaction_fees[1]["resource_token_fee_symbol"]
+            db_transaction.resource_token_fee_amount = float(transaction_fees[1]["resource_token_fee_amount"])
+        except Exception:
+            pass
+    with session:
+        try:
+            session.add(db_transaction)
+            session.commit()
+            print("\n\n", db_transaction.dict())
+        except IntegrityError:
+            pass
 
 
-# async def get_transaction(transaction_id: str, session: AsyncSession) -> Transaction:
-#     transaction = await session.execute(
-#         select(Transaction).where(Transaction.id == transaction_id)
-#     )
-#     return transaction.scalars().first()
-
-
-async def main():
+def main():
     while True:
-        block_height = await get_block_height()
-        block_hash = await get_block_hash_by_height(block_height)
-        block_transactions = await get_transactions(block_hash)
+        block_height = get_block_height()
+        block_hash = get_block_hash_by_height(block_height)
+        block_transactions = get_transactions(block_hash)
 
         for transaction in block_transactions:
-            await save_transaction(transaction, get_db_session())
-    # print(await get_transaction("870b92860f1bcc65e67ded8ee70d21322cfb16337781e2bbb7b4e81b729c423e", get_db_session()))
-
-
+            transaction_fees = get_transaction_fees(transaction["Logs"])
+            save_transaction(transaction, transaction_fees, get_db_session())
 
 
 if __name__ == "__main__":
-    # loop = asyncio.get_event_loop()
-    # loop.run_until_complete(main())
-    # loop.close()
-    asyncio.run(main())
+    init_db()
+    main()

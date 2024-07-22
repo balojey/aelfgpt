@@ -36,15 +36,21 @@ db_echo = config.get("DB_ECHO")
 #     return engine
 
 
-from sqlmodel import create_engine, Session
+from sqlmodel import create_engine, Session, SQLModel
 
 
 def get_db_session() -> Session:
     engine = create_engine(str(db_url), echo=bool(db_echo))
     session = Session(engine)
 
-    try:
-        yield session
-    finally:
-        session.commit()
-        session.close()
+    # try:
+    #     yield session
+    # finally:
+    #     session.commit()
+    #     session.close()
+    return session
+
+
+def init_db():
+    engine = create_engine(str(db_url), echo=bool(db_echo))
+    SQLModel.metadata.create_all(engine)
