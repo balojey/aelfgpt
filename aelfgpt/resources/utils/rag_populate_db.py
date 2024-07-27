@@ -1,4 +1,4 @@
-import os, torch, logging, pymongo
+import os, torch, logging, pymongo, sys
 from dotenv import find_dotenv, dotenv_values
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.core import StorageContext
@@ -6,7 +6,6 @@ from llama_index.core import VectorStoreIndex
 from llama_index.readers.json import JSONReader
 from llama_index.core import Settings
 from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
-from llama_index.llms.ollama import Ollama
 from llama_index.core import SimpleDirectoryReader
 
 
