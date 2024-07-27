@@ -1,8 +1,3 @@
-__import__('pysqlite3')
-import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-
-
 import os, torch, logging, pymongo
 from dotenv import find_dotenv, dotenv_values
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
@@ -11,8 +6,8 @@ from llama_index.core import VectorStoreIndex
 from llama_index.readers.json import JSONReader
 from llama_index.core import Settings
 from llama_index.vector_stores.mongodb import MongoDBAtlasVectorSearch
-import chromadb
 from llama_index.llms.ollama import Ollama
+from llama_index.core import SimpleDirectoryReader
 
 
 # Setup logging. To see more logging, set the level to DEBUG
@@ -71,9 +66,20 @@ storage_context = StorageContext.from_defaults(vector_store=vector_store)
 """ Read JSON Documents """
 
 json_data_file = './resources/aelfdocs.json'
+code_file = './resources/csharp.json'
+
 json_docs = JSONReader(levels_back=0).load_data(json_data_file)
+code_docs = JSONReader(levels_back=0).load_data(code_file)
+
+whitepaper_data_dir = './resources/whitepaper.pdf'
+whitepaper_docs = SimpleDirectoryReader(
+        input_dir=whitepaper_data_dir
+).load_data()
+
+print (f"Loaded {len(whitepaper_docs)} chunks from '{whitepaper_data_dir}'")
 
 print (f"Loaded {len(json_docs)} chunks from '{json_data_file}'")
+print (f"Loaded {len(code_docs)} chunks from '{code_file}'")
 
 """ Index the Documents and Store Them Into MongoDB Atlas """
 
@@ -81,4 +87,16 @@ json_index = VectorStoreIndex.from_documents(
     json_docs,
     storage_context=storage_context,
     embed_model=embed_model
+)
+
+code_index = VectorStoreIndex.from_documents(
+    code_docs,
+    storage_context=storage_context,
+    embed_model=embed_model
+)
+
+whitepaper_index = VectorStoreIndex.from_documents(
+    pdf_docs, 
+    storage_context=storage_context,
+    service_context=service_context,
 )
