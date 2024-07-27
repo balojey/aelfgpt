@@ -66,11 +66,11 @@ storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
 json_data_file = './resources/aelfdocs.json'
 code_file = './resources/csharp.json'
+whitepaper_data_dir = './resources'
+
 
 json_docs = JSONReader(levels_back=0).load_data(json_data_file)
 code_docs = JSONReader(levels_back=0).load_data(code_file)
-
-whitepaper_data_dir = './resources/whitepaper.pdf'
 whitepaper_docs = SimpleDirectoryReader(
         input_dir=whitepaper_data_dir
 ).load_data()
@@ -95,7 +95,7 @@ code_index = VectorStoreIndex.from_documents(
 )
 
 whitepaper_index = VectorStoreIndex.from_documents(
-    pdf_docs, 
+    whitepaper_docs, 
     storage_context=storage_context,
-    service_context=service_context,
+    embed_model=embed_model
 )

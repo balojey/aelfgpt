@@ -7,21 +7,14 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-chainlit = "^1.1.306"
 llama-index = "^0.10.55"
 llama-index-embeddings-huggingface = "^0.2.2"
 llama-index-readers-json = "^0.1.5"
 llama-index-vector-stores-mongodb = "^0.1.7"
 pymongo = {extras = ["srv"], version = "^4.7.2"}
-aelf-sdk = "^1.2.3"
-alembic = "^1.13.2"
-sqlmodel = "^0.0.21"
-psycopg2-binary = "^2.9.9"
-langchain = "^0.2.10"
-langchain-community = "^0.2.9"
-langchain-experimental = "^0.0.62"
 llama-index-llms-gemini = "^0.1.11"
-langchain-google-genai = "1.0.6"
+streamlit = "^1.37.0"
+python-dotenv = "^1.0.1"
 
 [build-system]
 requires = ["poetry-core"]
