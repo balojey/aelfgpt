@@ -9,7 +9,6 @@ readme = "README.md"
 python = "^3.10"
 chainlit = "^1.1.306"
 llama-index = "^0.10.55"
-llama-index-llms-ollama = "^0.1.6"
 llama-index-embeddings-huggingface = "^0.2.2"
 llama-index-readers-json = "^0.1.5"
 llama-index-vector-stores-mongodb = "^0.1.7"
@@ -21,7 +20,8 @@ psycopg2-binary = "^2.9.9"
 langchain = "^0.2.10"
 langchain-community = "^0.2.9"
 langchain-experimental = "^0.0.62"
-langchain-ollama = "^0.1.0rc0"
+llama-index-llms-gemini = "^0.1.11"
+langchain-google-genai = "1.0.6"
 
 [build-system]
 requires = ["poetry-core"]
