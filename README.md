@@ -6,9 +6,11 @@ AelfGPT is a GPT chat model perfectly geered towards the Aelf blockchain develop
 
 Just like ChatGPT, but for Aelf.
 
+AelfGPT is a RAG-enabled model, a smart contract debugger and a smart contract generator for the Aelf blockchain. At its core, AelfGPT is powered by Google's Gemini.
+
 ## Demo
 ![alt text](assets/aelfgpt-1.png "AelfGPT demo 1")
-![alt text](assets/aelfgpt-2.png "AelfGPT demo 2")
+![alt text](assets/aelfgpt-3.png "AelfGPT demo 2")
 
 ## Technologies
 
@@ -35,11 +37,11 @@ Then, install dependencies: `poetry install`
 
 ## Run AelfGPT
 
-Populate your environment variables
+Populate your environment variables in `.streamlit/secrets.toml`
 
 ```
-    ATLAS_URI=
-    LLAMA_API_KEY=
+    ATLAS_URI = "mongodb+srv://<username>:<password>@cluster0.nzbehil.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    GEMINI_API_KEY = ""
 ```
 
 Then, run: `poetry run streamlit run src/AelfGPT.py`
