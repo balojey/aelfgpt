@@ -33,9 +33,15 @@ All dependencies will be installed automatically
 
 *Option 2*
 
-Clone this repo: `git clone https://github.com/balojey/aelfgpt`
+Clone this repo:
+```
+    git clone https://github.com/balojey/aelfgpt
+```
 
-Then, install dependencies: `poetry install`
+Then, install dependencies:
+```
+    poetry install
+```
 
 ## Run AelfGPT
 
@@ -47,4 +53,7 @@ Populate your environment variables in `.streamlit/secrets.toml`
 
 Input your Google/Gemini API key in the secrets.toml file
 
-Then, run: `poetry run streamlit run src/AelfGPT.py`
+Then, run:
+```
+    poetry run streamlit run src/AelfGPT.py
+```
