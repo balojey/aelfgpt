@@ -1,8 +1,6 @@
-# Ava
+# Aelfgpt
 
-[Live app](https://ava-sui.streamlit.app/)
-
-[Project Writeup](https://peaceful-sleep-735.notion.site/Ava-Empowering-SUI-MOVE-Developers-An-AI-Chat-App-Leveraging-Atlas-MongoDB-1223f4d8a27d48dd81ca281b328a1282?pvs=4)
+[Live app](https://aelfgpt.streamlit.app/)
 
 AelfGPT is a GPT chat model perfectly geered towards the Aelf blockchain developers with the aim to soften development burden on the developers.
 

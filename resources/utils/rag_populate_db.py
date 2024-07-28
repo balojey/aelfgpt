@@ -45,11 +45,11 @@ mongodb_client = pymongo.MongoClient(ATLAS_URI)
 database = mongodb_client[DB_NAME]
 collection = database[COLLECTION_NAME]
 
-doc_count = collection.count_documents (filter = {})
-print (f"Document count before delete : {doc_count:,}")
+# doc_count = collection.count_documents (filter = {})
+# print (f"Document count before delete : {doc_count:,}")
 
-result = collection.delete_many(filter= {})
-print (f"Deleted docs : {result.deleted_count}")
+# result = collection.delete_many(filter= {})
+# print (f"Deleted docs : {result.deleted_count}")
 
 """ Setup Embeddings """
 
@@ -67,35 +67,44 @@ storage_context = StorageContext.from_defaults(vector_store=vector_store)
 json_data_file = './resources/aelfdocs.json'
 code_file = './resources/csharp.json'
 whitepaper_data_dir = './resources'
+repo_data_file = './resources/aelf_repo.json'
 
 
-json_docs = JSONReader(levels_back=0).load_data(json_data_file)
-code_docs = JSONReader(levels_back=0).load_data(code_file)
-whitepaper_docs = SimpleDirectoryReader(
-        input_dir=whitepaper_data_dir
-).load_data()
+# json_docs = JSONReader(levels_back=0).load_data(json_data_file)
+# code_docs = JSONReader(levels_back=0).load_data(code_file)
+repo_docs = JSONReader(levels_back=0).load_data(repo_data_file)
+# whitepaper_docs = SimpleDirectoryReader(
+#         input_dir=whitepaper_data_dir
+# ).load_data()
 
-print (f"Loaded {len(whitepaper_docs)} chunks from '{whitepaper_data_dir}'")
+# print (f"Loaded {len(whitepaper_docs)} chunks from '{whitepaper_data_dir}'")
 
-print (f"Loaded {len(json_docs)} chunks from '{json_data_file}'")
-print (f"Loaded {len(code_docs)} chunks from '{code_file}'")
+# print (f"Loaded {len(json_docs)} chunks from '{json_data_file}'")
+# print (f"Loaded {len(code_docs)} chunks from '{code_file}'")
+print (f"Loaded {len(repo_docs)} chunks from '{repo_data_file}'")
 
 """ Index the Documents and Store Them Into MongoDB Atlas """
 
-json_index = VectorStoreIndex.from_documents(
-    json_docs,
-    storage_context=storage_context,
-    embed_model=embed_model
-)
+# json_index = VectorStoreIndex.from_documents(
+#     json_docs,
+#     storage_context=storage_context,
+#     embed_model=embed_model
+# )
 
-code_index = VectorStoreIndex.from_documents(
-    code_docs,
-    storage_context=storage_context,
-    embed_model=embed_model
-)
+# code_index = VectorStoreIndex.from_documents(
+#     code_docs,
+#     storage_context=storage_context,
+#     embed_model=embed_model
+# )
 
-whitepaper_index = VectorStoreIndex.from_documents(
-    whitepaper_docs, 
+# whitepaper_index = VectorStoreIndex.from_documents(
+#     whitepaper_docs, 
+#     storage_context=storage_context,
+#     embed_model=embed_model
+# )
+
+repo_index = VectorStoreIndex.from_documents(
+    repo_docs,
     storage_context=storage_context,
     embed_model=embed_model
 )
