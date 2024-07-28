@@ -10,6 +10,8 @@ AelfGPT is a RAG-enabled model, a smart contract debugger and a smart contract g
 
 ## Demo
 ![alt text](assets/aelfgpt-1.png "AelfGPT demo 1")
+
+
 ![alt text](assets/aelfgpt-3.png "AelfGPT demo 2")
 
 ## Technologies
@@ -40,8 +42,9 @@ Then, install dependencies: `poetry install`
 Populate your environment variables in `.streamlit/secrets.toml`
 
 ```
-    ATLAS_URI = "mongodb+srv://<username>:<password>@cluster0.nzbehil.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-    GEMINI_API_KEY = ""
+    cp .streamlit/example.secrets.toml .streamlit/secrets.toml
 ```
+
+Input your Google/Gemini API key in the secrets.toml file
 
 Then, run: `poetry run streamlit run src/AelfGPT.py`
