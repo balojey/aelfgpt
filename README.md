@@ -3,7 +3,7 @@
 - [Live app](https://aelfgpt.streamlit.app/)
 - [Project Write-up](https://docs.google.com/document/d/1vR78O-UIJacbcr--iBRC22RuUVh2ljKczsMR8i414Ns/edit?usp=sharing)
 
-AelfGPT is a GPT chat model perfectly geered towards the Aelf blockchain developers with the aim to soften development burden on the developers.
+AelfGPT is a GPT chat model perfectly geered towards the Aelf blockchain developers with the aim of softening development burden on its developers.
 
 Just like ChatGPT, but for Aelf.
 
