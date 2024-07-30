@@ -1,6 +1,7 @@
 # Aelfgpt
 
 [Live app](https://aelfgpt.streamlit.app/)
+[Project Write-up](https://docs.google.com/document/d/1vR78O-UIJacbcr--iBRC22RuUVh2ljKczsMR8i414Ns/edit?usp=sharing)
 
 AelfGPT is a GPT chat model perfectly geered towards the Aelf blockchain developers with the aim to soften development burden on the developers.
 
@@ -9,9 +10,10 @@ Just like ChatGPT, but for Aelf.
 AelfGPT is a RAG-enabled model, a smart contract debugger and a smart contract generator for the Aelf blockchain. At its core, AelfGPT is powered by Google's Gemini.
 
 ## Demo
+### Demo 1
 ![alt text](assets/aelfgpt-1.png "AelfGPT demo 1")
 
-
+### Demo 2
 ![alt text](assets/aelfgpt-3.png "AelfGPT demo 2")
 
 ## Technologies
